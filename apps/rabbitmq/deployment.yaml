@@ -1,0 +1,161 @@
+# apiVersion: rabbitmq.com/v1beta1
+# kind: RabbitmqCluster
+# metadata:
+#   name: rabbit
+#   namespace: rabbitmq-operator
+# spec:
+#   replicas: 3
+#   persistence:
+#     storageClassName: standard
+#     storage: 10Gi
+#   resources:
+#     requests:
+#       memory: 512Mi
+#       cpu: 250m
+#     limits:
+#       memory: 1Gi
+#       cpu: 500m
+#   service:
+#     type: ClusterIP
+#     annotations:
+#       prometheus.io/scrape: "true"
+#       prometheus.io/port: "15692"
+#   rabbitmq:
+#     additionalConfig: |
+#       log.console = true
+#       log.console.level = info
+#       log.file = true
+#       log.file.level = warning
+#       log.file.rotate = 1 # Rotate logs
+#       log.file.max_size = 100Mi
+#       log.file.max_backups = 3
+#       cluster_formation.peer_discovery_backend = rabbit_peer_discovery_k8s
+#       cluster_formation.k8s.hostname_suffix = .rabbitmq-operator.svc.cluster.local
+#       cluster_formation.k8s.address_type = hostname
+#       cluster_formation.node_cleanup.interval = 10
+#       cluster_formation.node_cleanup.only_log_warning = false
+#       cluster_partition_handling = pause_minority
+#       # Enable the Prometheus Plugin
+#       management.load_definitions = /etc/rabbitmq/definitions.json
+#       rabbitmq_prometheus.enabled = true
+#       prometheus.tcp.port = 15692
+#       # Enable SSL/TLS with the self-signed certificate
+#       ssl.options.certfile = /etc/rabbitmq/ssl/cert.pem
+#       ssl.options.keyfile = /etc/rabbitmq/ssl/key.pem
+#       ssl.options.cacertfile = /etc/rabbitmq/ssl/ca.pem
+#       # Increase memory and disk limits for RabbitMQ
+#       vm_memory_high_watermark.relative = 0.8
+#       disk_free_limit.relative = 0.1
+#     volumes:
+#       - name: rabbitmq-ssl
+#         secret:
+#           secretName: rabbitmq-tls-secret  # Use the secret with the certificate
+#     volumeMounts:
+#       - name: rabbitmq-ssl
+#         mountPath: /etc/rabbitmq/ssl
+#         readOnly: true
+#   affinity:
+#     podAntiAffinity:
+#       preferredDuringSchedulingIgnoredDuringExecution:
+#         - weight: 1
+#           podAffinityTerm:
+#             labelSelector:
+#               matchExpressions:
+#                 - key: app.kubernetes.io/name
+#                   operator: In
+#                   values:
+#                     - rabbitmq
+#             topologyKey: "kubernetes.io/hostname"
+#   # Optional health checks
+#   livenessProbe:
+#     httpGet:
+#       path: /api/health
+#       port: 15672
+#     initialDelaySeconds: 30
+#     periodSeconds: 10
+#   readinessProbe:
+#     httpGet:
+#       path: /api/health
+#       port: 15672
+#     initialDelaySeconds: 10
+#     periodSeconds: 5
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rabbit
+  namespace: rabbitmq-operator
+spec:
+  replicas: 3
+  persistence:
+    storageClassName: standard
+    storage: 10Gi
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 250m
+    limits:
+      memory: 1Gi
+      cpu: 500m
+  service:
+    type: ClusterIP
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "15692"
+  rabbitmq:
+    additionalConfig: |
+      log.console = true
+      log.console.level = info
+      log.file = true
+      log.file.level = warning
+      log.file.rotate = 1 # Rotate logs
+      log.file.max_size = 100Mi
+      log.file.max_backups = 3
+      cluster_formation.peer_discovery_backend = rabbit_peer_discovery_k8s
+      cluster_formation.k8s.hostname_suffix = .rabbitmq-operator.svc.cluster.local
+      cluster_formation.k8s.address_type = hostname
+      cluster_formation.node_cleanup.interval = 10
+      cluster_formation.node_cleanup.only_log_warning = false
+      cluster_partition_handling = pause_minority
+      management.load_definitions = /etc/rabbitmq/definitions.json
+      rabbitmq_prometheus.enabled = true
+      prometheus.tcp.port = 15692
+      # Enable SSL/TLS with the self-signed certificate
+      ssl.options.certfile = /etc/rabbitmq/ssl/tls.crt
+      ssl.options.keyfile = /etc/rabbitmq/ssl/tls.key
+      ssl.options.cacertfile = /etc/rabbitmq/ssl/ca.crt
+      # Increase memory and disk limits for RabbitMQ
+      vm_memory_high_watermark.relative = 0.8
+      disk_free_limit.relative = 0.1
+    volumes:
+      - name: rabbitmq-ssl
+        secret:
+          secretName: rabbitmq-tls-secret  # Use the secret with the certificate
+    volumeMounts:
+      - name: rabbitmq-ssl
+        mountPath: /etc/rabbitmq/ssl
+        readOnly: true
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 1
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - rabbitmq
+            topologyKey: "kubernetes.io/hostname"
+  # Optional health checks
+  livenessProbe:
+    httpGet:
+      path: /api/health
+      port: 15672
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  readinessProbe:
+    httpGet:
+      path: /api/health
+      port: 15672
+    initialDelaySeconds: 10
+    periodSeconds: 5

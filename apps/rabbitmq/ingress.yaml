@@ -1,0 +1,58 @@
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: rabbitmq-ingress
+#   namespace: rabbitmq-operator
+#   annotations:
+#     traefik.ingress.k8s.io/router.entrypoints: web,websecure
+#     traefik.ingress.k8s.io/router.tls: "true"
+#     cert-manager.io/cluster-issuer: "selfsigned-issuer"  # Use the self-signed issuer
+# spec:
+#   rules:
+#     - host: rabbitmq.local  # Use your domain for RabbitMQ management UI
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: rabbitmq
+#                 port:
+#                   number: 15672
+#     - host: rabbitmq-amqp.local  # Use your domain for AMQP protocol
+#       tcp:
+#         port: 5672
+#         backend:
+#           service:
+#             name: rabbitmq
+#             port:
+#               number: 5672
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rabbitmq-ingress
+  namespace: rabbitmq-operator
+  annotations:
+    traefik.ingress.k8s.io/router.entrypoints: web,websecure
+    traefik.ingress.k8s.io/router.tls: "true"
+    cert-manager.io/cluster-issuer: "selfsigned-issuer"  # Use the self-signed issuer
+spec:
+  rules:
+    - host: rabbitmq.local  # Replace with your domain for RabbitMQ management UI
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: rabbitmq
+                port:
+                  number: 15672
+    - host: rabbitmq-amqp.local  # Replace with your domain for AMQP protocol
+      tcp:
+        port: 5672
+        backend:
+          service:
+            name: rabbitmq
+            port:
+              number: 5672

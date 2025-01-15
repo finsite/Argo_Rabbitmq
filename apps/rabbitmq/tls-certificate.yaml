@@ -1,0 +1,32 @@
+# apiVersion: cert-manager.io/v1
+# kind: Certificate
+# metadata:
+#   name: rabbitmq-tls
+#   namespace: rabbitmq-operator
+# spec:
+#   secretName: rabbitmq-tls-secret  # The name of the secret where the cert will be stored
+#   issuerRef:
+#     name: selfsigned-issuer       # Use the self-signed Issuer you defined
+#     kind: Issuer                  # Reference the Issuer resource
+#   commonName: rabbitmq.example.com  # Replace with your domain or service name
+#   dnsNames:
+#     - rabbitmq.example.com         # Replace with your domain or service name
+#   usages:
+#     - digital signature
+#     - key encipherment
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: rabbitmq-tls
+  namespace: rabbitmq-operator
+spec:
+  secretName: rabbitmq-tls-secret  # The name of the secret where the cert will be stored
+  issuerRef:
+    name: selfsigned-issuer       # Use the self-signed Issuer you defined
+    kind: Issuer                  # Reference the Issuer resource
+  commonName: rabbitmq.example.com  # Replace with your domain or service name
+  dnsNames:
+    - rabbitmq.example.com         # Replace with your domain or service name
+  usages:
+    - digital signature
+    - key encipherment

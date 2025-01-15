@@ -1,0 +1,21 @@
+# apiVersion: policy/v1
+# kind: PodDisruptionBudget
+# metadata:
+#   name: rabbitmq-pdb
+#   namespace: rabbitmq-operator
+# spec:
+#   minAvailable: 3  # Ensure at least two pods remain available
+#   selector:
+#     matchLabels:
+#       app.kubernetes.io/name: rabbitmq
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: rabbitmq-pdb
+  namespace: rabbitmq-operator
+spec:
+  minAvailable: 3  # Ensure at least two pods remain available
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rabbitmq
+

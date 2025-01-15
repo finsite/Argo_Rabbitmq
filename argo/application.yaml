@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rabbitmq
+spec:
+  destination:
+    namespace: rabbitmq-operator
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://github.com/your-username/your-repo.git
+    path: argo  # Path where all ArgoCD resources (e.g., deployment.yaml, ingress.yaml) are located
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
